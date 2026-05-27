@@ -17,12 +17,9 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest>=8.3.0", "pytest-asyncio>=0.23.0", "ruff>=0.6.0"]
 
-[tool.uv]
-python-install-mirror = "https://artifactory.ep.chehejia.com/artifactory/generic-github-releases-remote/indygreg/python-build-standalone/releases/download"
-
-[[tool.uv.index]]
-url = "https://artifactory.ep.chehejia.com/artifactory/api/pypi/pypi-remote/simple"
-default = true
+# 本仓库为 Public, 默认走公网 PyPI 以便 GH Actions 可用。
+# 内网开发者要走内部 mirror, 在 shell 里设 UV_INDEX_URL 即可:
+#   export UV_INDEX_URL=https://artifactory.ep.chehejia.com/artifactory/api/pypi/pypi-remote/simple
 
 [tool.ruff]
 line-length = 100
