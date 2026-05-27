@@ -30,3 +30,21 @@ def test_chat_retries_on_failure(mock_openai):
     client = LLMClient(make_cfg())
     assert client.chat(system="s", user="u") == "ok"
     assert mock_client.chat.completions.create.call_count == 3
+
+@patch("src.llm_client.OpenAI")
+def test_chat_does_not_retry_on_bad_request(mock_openai):
+    # 400 BadRequest 是永久错误 (content filter / 参数错), 不该重试
+    from openai import BadRequestError
+    import httpx
+    mock_client = mock_openai.return_value
+    err = BadRequestError(
+        message="content filter",
+        response=httpx.Response(400, request=httpx.Request("POST", "http://x")),
+        body={"error": {"code": "1301"}},
+    )
+    mock_client.chat.completions.create.side_effect = err
+    client = LLMClient(make_cfg())
+    import pytest
+    with pytest.raises(BadRequestError):
+        client.chat(system="s", user="u")
+    assert mock_client.chat.completions.create.call_count == 1

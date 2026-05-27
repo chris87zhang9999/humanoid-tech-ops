@@ -20,3 +20,17 @@ def test_classify_malformed_json_falls_back():
     llm.chat.return_value = "not json"
     out = classify(llm, title="t", summary="s", source="arxiv")
     assert out["track"] == "其他"
+
+def test_classify_content_filter_falls_back():
+    # 智谱 content filter 返回 BadRequestError, 不该让整个 pipeline 崩
+    from openai import BadRequestError
+    import httpx
+    llm = MagicMock()
+    llm.chat.side_effect = BadRequestError(
+        message="content filter",
+        response=httpx.Response(400, request=httpx.Request("POST", "http://x")),
+        body={"error": {"code": "1301"}},
+    )
+    out = classify(llm, title="t", summary="s", source="arxiv")
+    assert out["track"] == "其他"
+    assert out["vendor"] == "未知"

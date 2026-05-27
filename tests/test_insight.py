@@ -17,3 +17,15 @@ def test_generate_insight_malformed_returns_none():
     llm = MagicMock()
     llm.chat.return_value = "garbage"
     assert generate_insight(llm, title="t", summary="s", track="VLA", vendor="V") is None
+
+def test_generate_insight_content_filter_returns_none():
+    # 智谱 content filter 返回 BadRequestError, 不该让整个 pipeline 崩
+    from openai import BadRequestError
+    import httpx
+    llm = MagicMock()
+    llm.chat.side_effect = BadRequestError(
+        message="content filter",
+        response=httpx.Response(400, request=httpx.Request("POST", "http://x")),
+        body={"error": {"code": "1301"}},
+    )
+    assert generate_insight(llm, title="t", summary="s", track="VLA", vendor="V") is None
