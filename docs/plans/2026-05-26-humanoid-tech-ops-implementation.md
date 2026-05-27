@@ -17,9 +17,9 @@
 执行任何代码任务前完成:
 
 1. **GitHub repo 创建**
-   - 在 github.com/zhangrui1 下创建 `humanoid-tech-ops` (Public)
+   - 在 github.com/chris87zhang9999 下创建 `humanoid-tech-ops` (Public)
    - 本地已有 `/Users/zhangrui1/humanoid-tech-ops/` 工作目录,已 git init
-   - 添加 remote: `git remote add origin git@github.com:zhangrui1/humanoid-tech-ops.git`
+   - 添加 remote: `git remote add origin https://github.com/chris87zhang9999/humanoid-tech-ops.git`
 
 2. **飞书多维表手动建库**
    - 在飞书云空间新建一个多维表,命名 `humanoid-radar-bitable`
@@ -1332,7 +1332,7 @@ def main() -> int:
     log.info("wrote %s", out)
 
     # 推送到飞书机器人 (链接到 GitHub Public 路径)
-    repo = "zhangrui1/humanoid-tech-ops"
+    repo = "chris87zhang9999/humanoid-tech-ops"
     link = f"https://github.com/{repo}/blob/main/{out.as_posix()}"
     httpx.post(cfg.feishu_bot_webhook, json={
         "msg_type": "text",
@@ -1790,7 +1790,7 @@ if __name__ == "__main__":
 ```markdown
 ## MCP 安装 (本地 Claude Code)
 
-1. clone 本仓库到本地: `git clone git@github.com:zhangrui1/humanoid-tech-ops.git`
+1. clone 本仓库到本地: `git clone https://github.com/chris87zhang9999/humanoid-tech-ops.git`
 2. `cd humanoid-tech-ops && ept uv sync`
 3. 复制 `.env.example` → `.env`,填入飞书凭证
 4. 在 `~/.claude.json` 的 `mcpServers` 加:
