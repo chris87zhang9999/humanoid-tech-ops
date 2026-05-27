@@ -1,0 +1,28 @@
+[project]
+name = "humanoid-tech-ops"
+version = "0.1.0"
+description = "人形机器人行业技术运营 Agent"
+requires-python = ">=3.12"
+dependencies = [
+    "openai>=1.40.0",
+    "feedparser>=6.0.11",
+    "arxiv>=2.1.3",
+    "httpx>=0.27.0",
+    "pydantic>=2.7.0",
+    "mcp>=1.0.0",
+    "python-dotenv>=1.0.1",
+    "tenacity>=8.5.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3.0", "pytest-asyncio>=0.23.0", "ruff>=0.6.0"]
+
+[tool.uv]
+python-install-mirror = "https://artifactory.ep.chehejia.com/artifactory/generic-github-releases-remote/indygreg/python-build-standalone/releases/download"
+
+[[tool.uv.index]]
+url = "https://artifactory.ep.chehejia.com/artifactory/api/pypi/pypi-remote/simple"
+default = true
+
+[tool.ruff]
+line-length = 100
