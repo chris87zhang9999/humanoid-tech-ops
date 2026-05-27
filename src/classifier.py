@@ -2,6 +2,7 @@
 import json
 import logging
 from openai import OpenAIError
+from src.json_utils import parse_lenient_json
 from src.llm_client import LLMClient
 from src.prompts.classify import CLASSIFY_SYSTEM, build_user_prompt
 from src.schemas import TRACK_ENUM
@@ -14,7 +15,7 @@ def classify(llm: LLMClient, *, title: str, summary: str, source: str) -> dict:
     user = build_user_prompt(title, summary, source)
     try:
         raw = llm.chat(system=CLASSIFY_SYSTEM, user=user, max_tokens=200, temperature=0.0)
-        data = json.loads(raw)
+        data = parse_lenient_json(raw)
     except json.JSONDecodeError:
         logger.warning("classify: LLM returned non-JSON, fallback")
         return dict(_FALLBACK)

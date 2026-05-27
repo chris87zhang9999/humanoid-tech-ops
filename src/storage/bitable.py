@@ -1,6 +1,7 @@
 """飞书 Bitable 薄适配层。所有 entrypoint/MCP 走这里,禁止跳过 (CLAUDE.md 口径一致)。"""
 import logging
 import time
+from datetime import datetime, timedelta, timezone
 from typing import Any
 import httpx
 from tenacity import retry, stop_after_attempt, wait_exponential
@@ -9,6 +10,15 @@ logger = logging.getLogger(__name__)
 
 BASE = "https://open.feishu.cn/open-apis"
 BATCH_SIZE = 500  # 飞书 batch_create 上限,见 https://open.feishu.cn/document/server-docs/docs/bitable-v1/app-table-record/batch_create
+
+
+def recent_filter(field: str, days: int) -> str:
+    """构造 Bitable v1 filter,只查 field >= 当前-days 天的记录。
+    field 必须是 text 类型且存 ISO8601 字符串 (lexicographic 可比)。
+    用于增量去重防止全表扫描 (CLAUDE.md "魔法数字必须标注来源" - 30 天 = arxiv 索引最大延迟 + 1 周缓冲)。"""
+    cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).strftime("%Y-%m-%dT%H:%M:%S")
+    return f'CurrentValue.[{field}]>"{cutoff}"'
+
 
 class BitableClient:
     def __init__(self, app_id: str, app_secret: str, app_token: str):

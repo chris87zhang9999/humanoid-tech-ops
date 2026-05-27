@@ -2,6 +2,7 @@
 import json
 import logging
 from openai import OpenAIError
+from src.json_utils import parse_lenient_json
 from src.llm_client import LLMClient
 from src.prompts.insight import INSIGHT_SYSTEM, build_user_prompt
 
@@ -12,7 +13,7 @@ def generate_insight(llm: LLMClient, *, title: str, summary: str,
     user = build_user_prompt(title, summary, track, vendor)
     try:
         raw = llm.chat(system=INSIGHT_SYSTEM, user=user, max_tokens=500, temperature=0.2)
-        data = json.loads(raw)
+        data = parse_lenient_json(raw)
     except json.JSONDecodeError:
         logger.warning("insight: non-JSON output, skip")
         return None

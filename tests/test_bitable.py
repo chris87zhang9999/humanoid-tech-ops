@@ -1,5 +1,5 @@
 from unittest.mock import patch, MagicMock
-from src.storage.bitable import BitableClient
+from src.storage.bitable import BitableClient, recent_filter
 
 CFG_KW = dict(
     app_id="cli", app_secret="sec", app_token="tok",
@@ -22,3 +22,10 @@ def test_insert_records_batches(mock_httpx):
     c = BitableClient(**CFG_KW)
     ids = c.insert_records("tblX", [{"title": "a"}])
     assert ids == ["r1"]
+
+def test_recent_filter_format():
+    f = recent_filter("published_at", 30)
+    assert f.startswith('CurrentValue.[published_at]>"')
+    # ISO8601 prefix YYYY-MM-DDTHH:MM:SS
+    assert "T" in f
+

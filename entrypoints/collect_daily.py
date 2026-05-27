@@ -3,7 +3,7 @@ import logging
 import sys
 from src.config import load_config
 from src.llm_client import LLMClient
-from src.storage.bitable import BitableClient
+from src.storage.bitable import BitableClient, recent_filter
 from src.collectors.arxiv import ArxivCollector
 from src.collectors.rss import RssCollector
 from src.collectors.vendor import VendorCollector
@@ -38,8 +38,11 @@ def main() -> int:
         log.warning("no sources, exit")
         return 0
 
-    # 2. 增量去重: 查 tbl_sources 中已有的 hash_id (近 30 天)
-    existing = bitable.query_records(cfg.feishu_tbl_sources)
+    # 2. 增量去重: 只拉近 30 天 (服务端 filter 防全表扫描, Bitable 表会无限增长)
+    existing = bitable.query_records(
+        cfg.feishu_tbl_sources,
+        filter_=recent_filter("published_at", 30),
+    )
     existing_ids = {r["fields"].get("hash_id") for r in existing if r.get("fields")}
     fresh = [s for s in sources if s.hash_id not in existing_ids]
     log.info("fresh %d (filtered %d duplicates)", len(fresh), len(sources) - len(fresh))

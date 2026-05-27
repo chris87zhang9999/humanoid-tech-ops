@@ -3,7 +3,7 @@ import logging
 import sys
 from src.config import load_config
 from src.llm_client import LLMClient
-from src.storage.bitable import BitableClient
+from src.storage.bitable import BitableClient, recent_filter
 from src.collectors.vendor import VendorCollector
 from src.collectors.rss import RssCollector
 from src.classifier import classify
@@ -25,8 +25,11 @@ def main() -> int:
         except Exception as e:
             log.error("%s failed: %s", c.name, e)
 
-    # 增量去重(共用 tbl_sources)
-    existing = bitable.query_records(cfg.feishu_tbl_sources)
+    # 增量去重(共用 tbl_sources, 只拉近 7 天 — 紧急轮询不需要更长窗口)
+    existing = bitable.query_records(
+        cfg.feishu_tbl_sources,
+        filter_=recent_filter("published_at", 7),
+    )
     existing_ids = {r["fields"].get("hash_id") for r in existing if r.get("fields")}
     fresh = [s for s in sources if s.hash_id not in existing_ids]
 
