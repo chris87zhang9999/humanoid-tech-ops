@@ -6,6 +6,7 @@ from src.llm_client import LLMClient
 from src.storage.bitable import BitableClient
 from src.collectors.arxiv import ArxivCollector
 from src.collectors.rss import RssCollector
+from src.collectors.vendor import VendorCollector
 from src.classifier import classify
 from src.analyzer.insight import generate_insight
 from src.schemas import Insight
@@ -20,7 +21,7 @@ def main() -> int:
 
     # 1. 采集
     sources = []
-    for c in [ArxivCollector(), RssCollector()]:
+    for c in [ArxivCollector(), RssCollector(), VendorCollector()]:
         try:
             sources.extend(c.collect())
         except Exception as e:
