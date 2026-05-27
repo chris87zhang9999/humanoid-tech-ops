@@ -1,12 +1,12 @@
 """组装周报 Markdown。"""
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from src.llm_client import LLMClient
 from src.prompts.weekly import WEEKLY_SYSTEM
 from src.storage.bitable import BitableClient
 
 def fetch_week_insights(bitable: BitableClient, table_id: str, days: int = 7) -> list[dict]:
-    # 简化: 拉全部然后本地过滤近 N 天 (Phase 1 数据量不大)
-    cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+    # Phase 1 数据量不大,直接拉全表; Phase 2 再用 days 做服务端过滤
+    _ = days
     out = []
     for r in bitable.query_records(table_id):
         f = r.get("fields", {})

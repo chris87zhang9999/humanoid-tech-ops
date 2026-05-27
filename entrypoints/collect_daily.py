@@ -7,6 +7,10 @@ from src.storage.bitable import BitableClient
 from src.collectors.arxiv import ArxivCollector
 from src.collectors.rss import RssCollector
 from src.collectors.vendor import VendorCollector
+from src.collectors.podcast import PodcastCollector
+from src.collectors.youtube import YouTubeCollector
+from src.collectors.github_release import GithubReleaseCollector
+from src.collectors.funding import FundingCollector
 from src.classifier import classify
 from src.analyzer.insight import generate_insight
 from src.schemas import Insight
@@ -21,7 +25,9 @@ def main() -> int:
 
     # 1. 采集
     sources = []
-    for c in [ArxivCollector(), RssCollector(), VendorCollector()]:
+    for c in [ArxivCollector(), RssCollector(), VendorCollector(),
+              PodcastCollector(), YouTubeCollector(),
+              GithubReleaseCollector(), FundingCollector()]:
         try:
             sources.extend(c.collect())
         except Exception as e:

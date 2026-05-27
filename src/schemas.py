@@ -1,6 +1,6 @@
 """数据模型与赛道枚举。封闭枚举防 LLM 编造分类 (CLAUDE.md "约束优于鼓励")。"""
 import hashlib
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Final
 
 TRACK_ENUM: Final[set[str]] = {

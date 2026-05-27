@@ -1,7 +1,5 @@
 """stdio MCP server: 让 Claude Code 即时查询飞书表里沉淀的洞察。
 通过 ~/.claude.json mcpServers 配置启动 (见 README)。"""
-import json
-from datetime import datetime, timedelta, timezone
 from mcp.server.fastmcp import FastMCP
 from src.config import load_config
 from src.storage.bitable import BitableClient
@@ -28,7 +26,6 @@ def query_insights(track: str = "", since_days: int = 7,
     返回: Markdown 摘要,按厂商分组。
     """
     rows = bitable.query_records(cfg.feishu_tbl_insights)
-    cutoff = datetime.now(timezone.utc) - timedelta(days=since_days)
     out: list[dict] = []
     for r in rows:
         f = r.get("fields", {})

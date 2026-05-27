@@ -1,5 +1,6 @@
 """每 15 分钟轻量轮询。只跑高时效 collector,只跑突发判定。"""
-import logging, sys
+import logging
+import sys
 from src.config import load_config
 from src.llm_client import LLMClient
 from src.storage.bitable import BitableClient
