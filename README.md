@@ -7,3 +7,20 @@
 ## Status
 
 Phase 1 MVP, 开发中。
+
+## MCP 安装 (本地 Claude Code)
+
+1. clone 本仓库到本地: `git clone https://github.com/chris87zhang9999/humanoid-tech-ops.git`
+2. `cd humanoid-tech-ops && ept uv sync`
+3. 复制 `.env.example` → `.env`,填入飞书凭证
+4. 在 `~/.claude.json` 的 `mcpServers` 加:
+
+```json
+"humanoid-tech-ops": {
+  "command": "/Users/<你>/humanoid-tech-ops/.venv/bin/python",
+  "args": ["-m", "entrypoints.mcp_server"],
+  "cwd": "/Users/<你>/humanoid-tech-ops"
+}
+```
+
+5. 重启 Claude Code,问"最近 VLA 有什么进展"测试。
