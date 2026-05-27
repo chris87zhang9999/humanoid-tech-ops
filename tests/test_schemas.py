@@ -21,6 +21,8 @@ def test_raw_source_roundtrip():
     d = s.to_feishu_fields()
     assert d["hash_id"] == "abc"
     assert d["classified"] is False
+    # Bitable URL 字段需要 {link, text} 对象格式 (踩过 URLFieldConvFail 的坑)
+    assert d["url"] == {"link": "https://x", "text": "t"}
 
 def test_insight_validates_track():
     with pytest.raises(ValueError):

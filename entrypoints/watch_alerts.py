@@ -47,7 +47,9 @@ def main() -> int:
         bitable.insert_records(cfg.feishu_tbl_alerts, [{
             "trigger_at": s.published_at, "track": cls["track"],
             "vendor": cls["vendor"], "headline": s.title,
-            "source_url": s.url, "pushed": True,
+            # Bitable URL 字段要 {link,text} 对象 (踩过 URLFieldConvFail)
+            "source_url": {"link": s.url, "text": s.title},
+            "pushed": True,
         }])
         alerts += 1
     log.info("triggered %d alerts", alerts)

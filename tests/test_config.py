@@ -19,6 +19,8 @@ def test_load_config_from_env(monkeypatch):
     assert cfg.feishu_tbl_sources == "tblA"
 
 def test_load_config_missing_required(monkeypatch):
+    # 屏蔽 load_dotenv() 让测试不受仓库 .env 影响
+    monkeypatch.setattr("src.config.load_dotenv", lambda: None)
     for k in ["LLM_API_KEY", "FEISHU_APP_ID"]:
         monkeypatch.delenv(k, raising=False)
     with pytest.raises(ValueError, match="missing"):

@@ -25,7 +25,8 @@ class RawSource:
     def to_feishu_fields(self) -> dict:
         return {
             "hash_id": self.hash_id,
-            "url": self.url,
+            # Bitable URL 字段要 {link,text} 对象, 纯字符串会 URLFieldConvFail
+            "url": {"link": self.url, "text": self.title},
             "title": self.title,
             "source": self.source,
             "published_at": self.published_at,
