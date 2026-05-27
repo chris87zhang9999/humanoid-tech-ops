@@ -1,0 +1,39 @@
+name: weekly-report
+on:
+  schedule:
+    - cron: '30 0 * * 1'   # 周一 00:30 UTC = 08:30 北京
+  workflow_dispatch:
+
+jobs:
+  weekly:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: "3.12"
+      - run: uv sync
+      - name: Build weekly report
+        env:
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_BASE_URL: ${{ secrets.LLM_BASE_URL }}
+          LLM_MODEL: ${{ secrets.LLM_MODEL }}
+          FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+          FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+          FEISHU_BITABLE_APP_TOKEN: ${{ secrets.FEISHU_BITABLE_APP_TOKEN }}
+          FEISHU_TBL_SOURCES: ${{ secrets.FEISHU_TBL_SOURCES }}
+          FEISHU_TBL_INSIGHTS: ${{ secrets.FEISHU_TBL_INSIGHTS }}
+          FEISHU_TBL_ALERTS: ${{ secrets.FEISHU_TBL_ALERTS }}
+          FEISHU_TBL_TEMPLATES: ${{ secrets.FEISHU_TBL_TEMPLATES }}
+          FEISHU_BOT_WEBHOOK: ${{ secrets.FEISHU_BOT_WEBHOOK }}
+        run: uv run python -m entrypoints.build_weekly
+      - name: Commit report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "actions@github.com"
+          git add reports/
+          git commit -m "report: weekly $(date -u +%Y-W%V)" || echo "no changes"
+          git push
